@@ -1,33 +1,32 @@
-package com.florinvelesca.beaconapp;
+package com.florinvelesca.beaconapp.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.api.Hello;
 import com.florinvelesca.beaconapp.api.RetrofitBuilder;
 
 import org.altbeacon.beacon.Beacon;
 
-import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.GET;
 
 public class BeaconsRecylerAdapter extends RecyclerView.Adapter<BeaconsRecylerAdapter.ViewHolder> {
     private List<Beacon> beacons;
     private Context context;
+    private static final String TAG = "BeaconsRecylerAdapter";
+
     public BeaconsRecylerAdapter(List<Beacon> beacons, Context context) {
         this.beacons = beacons;
         this.context = context;
@@ -51,6 +50,7 @@ public class BeaconsRecylerAdapter extends RecyclerView.Adapter<BeaconsRecylerAd
         viewHolder.major.setText(beacon.getId2().toString());
         viewHolder.minor.setText(beacon.getId2().toString());
         viewHolder.distance.setText(String.valueOf(beacon.getDistance()));
+        Log.d(TAG,viewHolder.uuid.getText().toString());
 
     }
 

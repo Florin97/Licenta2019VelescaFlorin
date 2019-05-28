@@ -1,4 +1,4 @@
-package com.florinvelesca.beaconapp.beaconServices;
+package com.florinvelesca.beaconapp.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
