@@ -46,4 +46,5 @@ public class GetClassRoomByUuidTask extends AsyncTask<String,Void,String> {
         beaconClassRoomNameReceive.OnBeaconNameRetrieve(s);
         super.onPostExecute(s);
     }
+
 }

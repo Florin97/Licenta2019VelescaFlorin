@@ -1,6 +1,7 @@
 package com.florinvelesca.beaconapp.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.adapters.ClassRoomsRecyclerAdapter;
+import com.florinvelesca.beaconapp.interfaces.OnClassRoomSelected;
+import com.florinvelesca.beaconapp.map.DrawActivity;
 
 import org.altbeacon.beacon.BeaconParser;
 
@@ -27,7 +30,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchClassRoomFragment extends Fragment{
+public class SearchClassRoomFragment extends Fragment implements OnClassRoomSelected {
     private static final String RUUVI_LAYOUT = "m:0-2=0499,i:4-19,i:20-21,i:22-23,p:24-24"; // TBD
     private static final String IBEACON_LAYOUT = "m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24";
     private static final String ALTBEACON_LAYOUT = BeaconParser.ALTBEACON_LAYOUT;
@@ -38,7 +41,7 @@ public class SearchClassRoomFragment extends Fragment{
     private RelativeLayout relativeLayout;
     private RecyclerView recyclerView;
     private ClassRoomsRecyclerAdapter adapter;
-
+    private List<String> classRooms = new ArrayList<>();
     public SearchClassRoomFragment() {
         // Required empty public constructor
     }
@@ -63,9 +66,9 @@ public class SearchClassRoomFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search_class_room, container, false);
-        List<String> classRooms = new ArrayList<>();
 
-        for(int i = 100; i < 200; i++){
+
+        for(int i = 100; i < 400; i++){
             String className = "C" + Integer.toString((i));
             classRooms.add(className);
         }
@@ -73,7 +76,7 @@ public class SearchClassRoomFragment extends Fragment{
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_class_rooms);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new ClassRoomsRecyclerAdapter(classRooms,getContext());
+        adapter = new ClassRoomsRecyclerAdapter(classRooms,getActivity(),this);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -109,5 +112,13 @@ public class SearchClassRoomFragment extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onClassSelected(int position) {
+        Intent mapActivity = new Intent(getActivity(), DrawActivity.class);
+        mapActivity.putExtra("ClassName",classRooms.get(position));
+        startActivity(mapActivity);
+
     }
 }

@@ -63,6 +63,7 @@ public class SearchBeaconFragment extends Fragment{
         // Required empty public constructor
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

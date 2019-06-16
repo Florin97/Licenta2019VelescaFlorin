@@ -13,9 +13,16 @@ public interface BeaconDao {
     @Query("SELECT * FROM BeaconTable")
     List<BeaconTable> getAllBeacons();
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertBeacon(BeaconTable beaconTable);
 
     @Query("SELECT classRoomName FROM BeaconTable WHERE uuid like :uuid AND minor like :minor;")
     String getClassName(String uuid, String minor);
+
+    @Query("SELECT classRoomName FROM BeaconTable WHERE id like :id;")
+    String getClassNameById(int id);
+
+    @Query("SELECT id FROM BeaconTable WHERE classRoomName like :className;")
+    int getClassIdByName(String className);
+
 }

@@ -8,14 +8,21 @@ import com.florinvelesca.beaconapp.database.BeaconDao;
 import com.florinvelesca.beaconapp.database.BeaconLink;
 import com.florinvelesca.beaconapp.database.BeaconLinkDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class BeaconTest {
-    public static void start(final AppDatabase appDatabase) {
+
+    public static List<String> start(final AppDatabase appDatabase, String currentLocation, String destination) {
 
         BeaconLinkDao beaconLinkDao = appDatabase.beaconLinkDao();
         BeaconDao beaconDao = appDatabase.beaconDao();
+
+        int currentLocationId = beaconDao.getClassIdByName(currentLocation);
+        int destinationId = beaconDao.getClassIdByName(destination);
+
+
         List<BeaconLink> allLinks = beaconLinkDao.getAllBeaconLinks();
         BeaconGraph beaconGraph = new BeaconGraph();
         for (BeaconLink link : allLinks) {
@@ -23,13 +30,21 @@ public class BeaconTest {
             beaconGraph.addLink(link.getBeacon1Id(), link.getBeacon2Id(), link.getDistance());
         }
 
-        List<BeaconTable> beaconTables = beaconDao.getAllBeacons();
-        BeaconTable lastBeaconTable = beaconTables.get(beaconTables.size() - 1);
-        List<Integer> path = beaconGraph.getPath(beaconTables.get(0).getId(), lastBeaconTable.getId());
+//        List<BeaconTable> beaconTables = beaconDao.getAllBeacons();
+//        BeaconTable lastBeaconTable = beaconTables.get(beaconTables.size() - 1);
+
+        List<Integer> path = beaconGraph.getPath(currentLocationId, destinationId);
 
         for (Integer integer : path) {
             Log.d("path", integer.toString());
         }
+
+        List<String> pathNames = new ArrayList<>();
+        for (int i : path) {
+            pathNames.add(beaconDao.getClassNameById(i));
+        }
+
+        return pathNames;
     }
 
 }

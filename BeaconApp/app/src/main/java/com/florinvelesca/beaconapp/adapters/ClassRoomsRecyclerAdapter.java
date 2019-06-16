@@ -11,6 +11,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.florinvelesca.beaconapp.R;
+import com.florinvelesca.beaconapp.interfaces.OnClassRoomSelected;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,23 +21,26 @@ public class ClassRoomsRecyclerAdapter extends RecyclerView.Adapter<ClassRoomsRe
     List<String> searchedClassRooms;
     List<String> allClassRooms;
     Context context;
+    private static OnClassRoomSelected onClassRoomSelected;
 
-    public ClassRoomsRecyclerAdapter(List<String> classRooms, Context context) {
+    public ClassRoomsRecyclerAdapter(List<String> classRooms, Context context,OnClassRoomSelected classRoomSelected) {
         this.searchedClassRooms = classRooms;
         this.allClassRooms = new ArrayList<>(classRooms);
         this.context = context;
+        onClassRoomSelected = classRoomSelected;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.classroom_item_view, viewGroup, false));
+        return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.classroom_item_view, viewGroup, false),onClassRoomSelected);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         String className = searchedClassRooms.get(i);
         viewHolder.className.setText(className);
+
 
     }
 
@@ -78,13 +82,20 @@ public class ClassRoomsRecyclerAdapter extends RecyclerView.Adapter<ClassRoomsRe
         }
     };
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         TextView className;
-
-        public ViewHolder(@NonNull View itemView) {
+        OnClassRoomSelected onClassRoomSelected;
+        public ViewHolder(@NonNull View itemView, OnClassRoomSelected onClassRoomSelected) {
             super(itemView);
+            this.onClassRoomSelected = onClassRoomSelected;
             this.className = itemView.findViewById(R.id.text_view_class_name);
+            itemView.setOnClickListener(this);
 
+        }
+
+        @Override
+        public void onClick(View view) {
+            onClassRoomSelected.onClassSelected(getAdapterPosition());
         }
     }
 }

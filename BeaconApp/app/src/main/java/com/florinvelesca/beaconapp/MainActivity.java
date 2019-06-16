@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,7 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
+import android.view.PointerIcon;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,12 +34,14 @@ import com.florinvelesca.beaconapp.fragments.SearchBeaconFragment;
 import com.florinvelesca.beaconapp.fragments.SearchClassRoomFragment;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconReceive;
+import com.florinvelesca.beaconapp.pathalgorithm.BeaconTest;
 import com.florinvelesca.beaconapp.tasks.GetClassRoomByUuidTask;
 import com.florinvelesca.beaconapp.tasks.InsertBeaconsTask;
 
 
 import org.altbeacon.beacon.Beacon;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +63,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkPermission();
         linkUI(savedInstanceState);
 
-
+//        Display display = getWindowManager().getDefaultDisplay();
+//        Point size = new Point();
+//         display.getSize(size);
+//        Log.d("Main Activity",String.valueOf(size.x)  + ' ' + String.valueOf(size.y));
+//
+//        final AppDatabase database = DatabaseHolder.getDatabase(this);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                BeaconTest.start(database,"C300","C304");
+//            }
+//        }).start();
 
     }
 
@@ -185,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void OnBeaconReceive(List<Beacon> beaconList) {
-       // insertBeacons(beaconList);
+     //   insertBeacons(beaconList);
 
     }
     @Override
