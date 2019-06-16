@@ -10,6 +10,7 @@ import android.util.Log;
 import com.florinvelesca.beaconapp.MainActivity;
 import com.florinvelesca.beaconapp.database.AppDatabase;
 import com.florinvelesca.beaconapp.database.BeaconDao;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.fragments.SearchBeaconFragment;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
@@ -112,13 +113,13 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
                         if (!beacons.isEmpty() && context != null) {
 
                             Beacon closestBeacon = getClosestBeacon(beacons);
-                            final String colestBeaconName = getClassByUuidMinor(closestBeacon.getId1().toString(),closestBeacon.getId3().toString());
+                            final BeaconTable closestBeaconName = getClassByUuidMinor(closestBeacon.getId1().toString(),closestBeacon.getId3().toString());
 
 
                             Objects.requireNonNull((DrawActivity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    nearestBeaconReceive.onNearestBeaconReceive(colestBeaconName);
+                                    nearestBeaconReceive.onNearestBeaconReceive(closestBeaconName);
                                     beaconReceive.OnBeaconReceive(beacons);
 
                                 }
@@ -148,10 +149,10 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
     }
 
 
-    private String getClassByUuidMinor( String uuid,String minor){
-        String result;
+    private BeaconTable getClassByUuidMinor(String uuid, String minor){
+        BeaconTable result;
         BeaconDao beaconDao = database.beaconDao();
-        result = String.valueOf(beaconDao.getClassName(uuid,minor));
+        result = beaconDao.getRoom(uuid,minor);
 
 
         return result;

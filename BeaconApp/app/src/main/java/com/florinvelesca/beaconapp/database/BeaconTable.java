@@ -7,6 +7,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 @Entity(indices = {@Index(value = {"uuid","minor"}, unique = true)})
@@ -86,6 +87,25 @@ public class BeaconTable implements Serializable {
 
     public void setClassRoomName(String classRoomName) {
         this.classRoomName = classRoomName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BeaconTable that = (BeaconTable) o;
+        return id == that.id &&
+                roomId == that.roomId &&
+                floor == that.floor &&
+                uuid.equals(that.uuid) &&
+                minor.equals(that.minor) &&
+                classRoomName.equals(that.classRoomName) &&
+                type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uuid, minor, classRoomName, roomId, floor, type);
     }
 
     @Override

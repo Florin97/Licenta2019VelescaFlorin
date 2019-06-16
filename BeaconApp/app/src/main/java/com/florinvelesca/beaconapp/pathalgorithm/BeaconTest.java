@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BeaconTest {
 
-    public static List<String> start(final AppDatabase appDatabase, String currentLocation, String destination) {
+    public static List<BeaconTable> start(final AppDatabase appDatabase, String currentLocation, String destination) {
 
         BeaconLinkDao beaconLinkDao = appDatabase.beaconLinkDao();
         BeaconDao beaconDao = appDatabase.beaconDao();
@@ -39,12 +39,12 @@ public class BeaconTest {
             Log.d("path", integer.toString());
         }
 
-        List<String> pathNames = new ArrayList<>();
+        List<BeaconTable> pathRooms = new ArrayList<>();
         for (int i : path) {
-            pathNames.add(beaconDao.getClassNameById(i));
+            pathRooms.add(beaconDao.getRoomById(i));
         }
 
-        return pathNames;
+        return pathRooms;
     }
 
 }

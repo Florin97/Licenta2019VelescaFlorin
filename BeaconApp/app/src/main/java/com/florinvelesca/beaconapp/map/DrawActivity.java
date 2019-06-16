@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.database.AppDatabase;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.ClassroomCoordinates;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
@@ -38,7 +39,8 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
     private List<Beacon> beaconList;
     private String destination;
     private String currentLocation;
-    List<String> pathToFollow;
+    private int currentFloor = -1;
+    List<BeaconTable> pathToFollow;
     Map<String, ClassroomCoordinates> classroomMap;
 
     @Override
@@ -56,13 +58,12 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             destination = extras.getString("ClassName", "nill");
-            Log.d(getLocalClassName(), destination);
             currentLocation = extras.getString("CurrentClassName","nill");
-            Log.d(getLocalClassName(), currentLocation);
+            currentFloor = extras.getInt("CurrentFloor",-1);
         }
 
         mapView = findViewById(R.id.map_view);
-
+        mapView.setCurrentFloor(currentFloor);
         try {
             InputStream classroomJsonInputStream = getAssets().open("classroom_coordinates_floor2.json");
             List<ClassroomCoordinates> classrooms = new Gson().fromJson(new InputStreamReader(classroomJsonInputStream), new TypeToken<List<ClassroomCoordinates>>() {
@@ -91,23 +92,25 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
     public void OnNearBeacon(Beacon beacon) { }
 
     @Override
-    public void OnBeaconNameRetrieve(String name) { }
+    public void OnBeaconNameRetrieve(BeaconTable name) { }
 
 
     @Override
-    public void onPathReceive(List<String> path) {
+    public void onPathReceive(List<BeaconTable> path) {
         pathToFollow = path;
         mapView.setClassroomCoordinates(classroomMap);
         mapView.setPathToFollow(pathToFollow);
     }
 
     @Override
-    public void onNearestBeaconReceive(String beaconName) {
+    public void onNearestBeaconReceive(BeaconTable beaconName) {
         if(mapView.isVisited(beaconName)){
             Toast.makeText(DrawActivity.this,"You Are going in the wrong direction",Toast.LENGTH_SHORT).show();
 
         }
+        mapView.setCurrentFloor(beaconName.getFloor());
         mapView.addVisitedRoom(beaconName);
+
         mapView.invalidate();
     }
 }

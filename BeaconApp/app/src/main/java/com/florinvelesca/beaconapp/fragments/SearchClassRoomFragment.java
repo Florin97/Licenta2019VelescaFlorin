@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.florinvelesca.beaconapp.MainActivity;
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.adapters.ClassRoomsRecyclerAdapter;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.interfaces.OnClassRoomSelected;
 import com.florinvelesca.beaconapp.map.DrawActivity;
 
@@ -119,11 +120,12 @@ public class SearchClassRoomFragment extends Fragment implements OnClassRoomSele
     @Override
     public void onClassSelected(int position) {
         MainActivity mainActivity = (MainActivity) getActivity();
-        String currentBeacon = mainActivity.getCurrentBeacon();
+        BeaconTable currentBeacon = mainActivity.getCurrentBeacon();
         if(currentBeacon != null){
             Intent mapActivity = new Intent(getActivity(), DrawActivity.class);
             mapActivity.putExtra("ClassName",classRooms.get(position));
-            mapActivity.putExtra("CurrentClassName",currentBeacon);
+            mapActivity.putExtra("CurrentClassName",currentBeacon.getClassRoomName());
+            mapActivity.putExtra("CurrentFloor",currentBeacon.getFloor());
 
             startActivity(mapActivity);
 

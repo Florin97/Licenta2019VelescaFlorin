@@ -28,6 +28,7 @@ import com.florinvelesca.beaconapp.adapters.ClassRoomsRecyclerAdapter;
 import com.florinvelesca.beaconapp.adapters.ViewPagerAdapter;
 import com.florinvelesca.beaconapp.database.AppDatabase;
 import com.florinvelesca.beaconapp.database.BeaconDao;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.DatabaseHelper;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.fragments.SearchBeaconFragment;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView NearClassTextView;
 
 
-    private String currentBeacon;
+    private BeaconTable currentBeacon;
 
 
 
@@ -204,10 +205,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    public void setCurrentBeacon(String currentBeacon) {
+    public void setCurrentBeacon(BeaconTable currentBeacon) {
         this.currentBeacon = currentBeacon;
     }
-    public String getCurrentBeacon() {
+    public BeaconTable getCurrentBeacon() {
         return currentBeacon;
     }
 
@@ -222,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void OnBeaconNameRetrieve(String name) {
-        NearClassTextView.setText(name);
-        setCurrentBeacon(name);
+    public void OnBeaconNameRetrieve(BeaconTable beaconTable) {
+        NearClassTextView.setText(beaconTable.getClassRoomName());
+        setCurrentBeacon(beaconTable);
 
     }
 

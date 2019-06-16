@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.ClassroomCoordinates;
 
 import java.util.ArrayList;
@@ -33,11 +34,16 @@ public class MapView extends ImageView {
     private Paint visitedPaint = new Paint();
     private Map<String, ClassroomCoordinates> classroomCoordinates;
 
+    public void setCurrentFloor(int currentFloor) {
+        this.currentFloor = currentFloor;
+    }
+
+    private int currentFloor;
 
     //
-    private List<String> visitedRooms = new ArrayList<>();
+    private List<BeaconTable> visitedRooms = new ArrayList<>();
 
-    private List<String> pathToFollow = Collections.emptyList();
+    private List<BeaconTable> pathToFollow = Collections.emptyList();
 
 
 
@@ -62,16 +68,16 @@ public class MapView extends ImageView {
         this.classroomCoordinates = classroomCoordinates;
     }
 
-    public void setPathToFollow(List<String> pathToFollow) {
+    public void setPathToFollow(List<BeaconTable> pathToFollow) {
         this.pathToFollow = pathToFollow;
     }
 
-    public void addVisitedRoom(String visitedRoom) {
+    public void addVisitedRoom(BeaconTable visitedRoom) {
         visitedRooms.add(visitedRoom);
         invalidate();
     }
 
-    public Boolean isVisited(String beaconName){
+    public Boolean isVisited(BeaconTable beaconName){
         if(visitedRooms.contains(beaconName) && !visitedRooms.get(visitedRooms.size() -1).equals(beaconName)){
             Log.d("MAP VIEW","Wrong direction");
             return true;
@@ -119,13 +125,16 @@ public class MapView extends ImageView {
         if (classroomCoordinates == null || classroomCoordinates.isEmpty()) {
             return;
         }
-        for (String room : pathToFollow) {
-            ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(room);
+        for (BeaconTable room : pathToFollow) {
+            if(room.getFloor() != currentFloor){
+                continue;
+            }
+            ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(room.getClassRoomName());
             canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, pathToFollowPaint);
         }
 
-        for (String visitedRoom : visitedRooms) {
-            ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(visitedRoom);
+        for (BeaconTable visitedRoom : visitedRooms) {
+            ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(visitedRoom.getClassRoomName());
             canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, visitedPaint);
         }
     }

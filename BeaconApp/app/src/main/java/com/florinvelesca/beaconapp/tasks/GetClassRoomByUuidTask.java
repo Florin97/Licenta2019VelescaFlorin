@@ -8,9 +8,10 @@ import android.widget.Toast;
 
 import com.florinvelesca.beaconapp.database.AppDatabase;
 import com.florinvelesca.beaconapp.database.BeaconDao;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 
-public class GetClassRoomByUuidTask extends AsyncTask<String,Void,String> {
+public class GetClassRoomByUuidTask extends AsyncTask<String,Void,BeaconTable> {
     private OnBeaconClassRoomNameReceive beaconClassRoomNameReceive;
     private AppDatabase database;
     private Context context;
@@ -25,10 +26,10 @@ public class GetClassRoomByUuidTask extends AsyncTask<String,Void,String> {
 
 
     @Override
-    protected String doInBackground(String... strings) {
-        String result;
+    protected BeaconTable doInBackground(String... strings) {
+        BeaconTable result;
         BeaconDao beaconDao = database.beaconDao();
-            result = String.valueOf(beaconDao.getClassName(strings[0],strings[1]));
+            result = beaconDao.getRoom(strings[0],strings[1]);
 
 
         return result;
@@ -40,8 +41,8 @@ public class GetClassRoomByUuidTask extends AsyncTask<String,Void,String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        Log.d("Task 2:::",s);
+    protected void onPostExecute(BeaconTable s) {
+
        // Toast.makeText(context,"You are near " + s, Toast.LENGTH_SHORT).show();
         beaconClassRoomNameReceive.OnBeaconNameRetrieve(s);
         super.onPostExecute(s);

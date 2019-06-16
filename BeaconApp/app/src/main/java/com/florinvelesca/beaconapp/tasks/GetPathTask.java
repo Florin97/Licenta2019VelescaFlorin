@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.florinvelesca.beaconapp.database.AppDatabase;
+import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnPathReceive;
@@ -18,7 +19,7 @@ public class GetPathTask extends AsyncTask<Void, Void, Void> {
     private Context context;
     private String currentClass;
     private String destinationClass;
-    private List<String> path;
+    private List<BeaconTable> path;
 
 
     public GetPathTask(Context context, OnPathReceive onPathReceive, String currentClass, String destinationClass) {
