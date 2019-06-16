@@ -8,9 +8,13 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.florinvelesca.beaconapp.MainActivity;
+import com.florinvelesca.beaconapp.database.AppDatabase;
+import com.florinvelesca.beaconapp.database.BeaconDao;
+import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.fragments.SearchBeaconFragment;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconReceive;
+import com.florinvelesca.beaconapp.interfaces.OnNearestBeaconReceive;
 import com.florinvelesca.beaconapp.map.DrawActivity;
 
 import org.altbeacon.beacon.Beacon;
@@ -36,14 +40,18 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
     private static final String EDDYSTONE_URL_LAYOUT = BeaconParser.EDDYSTONE_URL_LAYOUT;
     private static final String EDDYSTONE_TLM_LAYOUT = BeaconParser.EDDYSTONE_TLM_LAYOUT;
     private OnBeaconReceive beaconReceive;
-
+    private AppDatabase database;
+    private OnNearestBeaconReceive nearestBeaconReceive;
     public SearchBeaconsTask(Context context) {
         this.context = context;
         beaconReceive = (OnBeaconReceive) context;
+        nearestBeaconReceive = (OnNearestBeaconReceive) context;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
+        database = DatabaseHolder.getDatabase(context);
+
 
 
         beaconManager = BeaconManager.getInstanceForApplication(context);
@@ -97,16 +105,27 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
                 final List<Beacon> beacons = new ArrayList<>(collection);
-                if (!beacons.isEmpty() && context != null) {
-                    Objects.requireNonNull((DrawActivity) context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
 
-                            beaconReceive.OnBeaconReceive(beacons);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!beacons.isEmpty() && context != null) {
 
+                            Beacon closestBeacon = getClosestBeacon(beacons);
+                            final String colestBeaconName = getClassByUuidMinor(closestBeacon.getId1().toString(),closestBeacon.getId3().toString());
+
+
+                            Objects.requireNonNull((DrawActivity) context).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    nearestBeaconReceive.onNearestBeaconReceive(colestBeaconName);
+                                    beaconReceive.OnBeaconReceive(beacons);
+
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                }).start();
             }
         });
 
@@ -116,5 +135,25 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
             Log.e(getClass().getName(), "Error: ", e);
         }
     }
+    private Beacon getClosestBeacon(List<Beacon> beaconList){
+        double min = 9999;
+        Beacon minBeacon = null;
+        for(Beacon beacon : beaconList){
+            if(beacon.getDistance() < min){
+                min = beacon.getDistance();
+                minBeacon = beacon;
+            }
+        }
+        return minBeacon;
+    }
 
+
+    private String getClassByUuidMinor( String uuid,String minor){
+        String result;
+        BeaconDao beaconDao = database.beaconDao();
+        result = String.valueOf(beaconDao.getClassName(uuid,minor));
+
+
+        return result;
+    }
 }

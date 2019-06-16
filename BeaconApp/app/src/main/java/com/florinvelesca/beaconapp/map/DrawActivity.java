@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.database.AppDatabase;
@@ -12,6 +13,7 @@ import com.florinvelesca.beaconapp.database.ClassroomCoordinates;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconReceive;
+import com.florinvelesca.beaconapp.interfaces.OnNearestBeaconReceive;
 import com.florinvelesca.beaconapp.interfaces.OnPathReceive;
 import com.florinvelesca.beaconapp.pathalgorithm.BeaconTest;
 import com.florinvelesca.beaconapp.tasks.GetClassRoomByUuidTask;
@@ -31,10 +33,11 @@ import java.util.List;
 import java.util.Map;
 
 
-public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconClassRoomNameReceive, OnPathReceive {
+public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconClassRoomNameReceive, OnPathReceive, OnNearestBeaconReceive {
     private MapView mapView;
     private List<Beacon> beaconList;
     private String destination;
+    private String currentLocation;
     List<String> pathToFollow;
     Map<String, ClassroomCoordinates> classroomMap;
 
@@ -42,6 +45,7 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.draw_activity);
+
         SearchBeaconsTask searchBeaconsTask = new SearchBeaconsTask(this);
         try {
             searchBeaconsTask.execute();
@@ -53,8 +57,9 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         if (extras != null) {
             destination = extras.getString("ClassName", "nill");
             Log.d(getLocalClassName(), destination);
+            currentLocation = extras.getString("CurrentClassName","nill");
+            Log.d(getLocalClassName(), currentLocation);
         }
-
 
         mapView = findViewById(R.id.map_view);
 
@@ -66,7 +71,8 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
             for (ClassroomCoordinates classroom : classrooms) {
                 classroomMap.put(classroom.getName(), classroom);
             }
-            GetPathTask getPathTask = new GetPathTask(this,this,"C300","C303");
+
+            GetPathTask getPathTask = new GetPathTask(this, this, currentLocation, destination);
             getPathTask.execute();
 
         } catch (IOException e) {
@@ -74,72 +80,18 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         }
 
 
-
     }
-
-
-    private void sendClassroomsWithDelay(final List<ClassroomCoordinates> classrooms) {
-        if (classrooms.isEmpty()) {
-            return;
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mapView.addVisitedRoom(classrooms.get(0).getName());
-                classrooms.remove(0);
-                sendClassroomsWithDelay(classrooms);
-            }
-        }, 2000);
-    }
-
-    private void sendNamesClassroomsWithDelay(final List<String> classrooms) {
-        if (classrooms.isEmpty()) {
-            return;
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mapView.addVisitedRoom(classrooms.get(0));
-                classrooms.remove(0);
-                sendNamesClassroomsWithDelay(classrooms);
-            }
-        }, 2000);
-    }
-
-
     @Override
     public void OnBeaconReceive(List<Beacon> beaconList) {
         Log.d(getLocalClassName(), beaconList.toString());
         this.beaconList = beaconList;
-
-        for(Beacon beacon : beaconList){
-            if(beacon.getDistance() < 0.5){
-
-            }
-        }
-
-
     }
 
     @Override
-    public void OnNearBeacon(Beacon beacon) {
-
-    }
-
-    private void getBeaconName(Beacon beacon) {
-        final AppDatabase database = DatabaseHolder.getDatabase(DrawActivity.this);
-        GetClassRoomByUuidTask task = new GetClassRoomByUuidTask(database, DrawActivity.this);
-        task.execute(beacon.getId1().toString(), beacon.getId3().toString());
-
-    }
+    public void OnNearBeacon(Beacon beacon) { }
 
     @Override
-    public void OnBeaconNameRetrieve(String name) {
-
-
-    }
+    public void OnBeaconNameRetrieve(String name) { }
 
 
     @Override
@@ -147,7 +99,15 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         pathToFollow = path;
         mapView.setClassroomCoordinates(classroomMap);
         mapView.setPathToFollow(pathToFollow);
-        sendNamesClassroomsWithDelay(pathToFollow);
+    }
 
+    @Override
+    public void onNearestBeaconReceive(String beaconName) {
+        if(mapView.isVisited(beaconName)){
+            Toast.makeText(DrawActivity.this,"You Are going in the wrong direction",Toast.LENGTH_SHORT).show();
+
+        }
+        mapView.addVisitedRoom(beaconName);
+        mapView.invalidate();
     }
 }

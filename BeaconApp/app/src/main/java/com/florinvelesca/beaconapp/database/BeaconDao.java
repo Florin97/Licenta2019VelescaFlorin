@@ -25,4 +25,7 @@ public interface BeaconDao {
     @Query("SELECT id FROM BeaconTable WHERE classRoomName like :className;")
     int getClassIdByName(String className);
 
+    @Query("SELECT type FROM BeaconTable WHERE classRoomName like :className;")
+    int getType(String className);
+
 }

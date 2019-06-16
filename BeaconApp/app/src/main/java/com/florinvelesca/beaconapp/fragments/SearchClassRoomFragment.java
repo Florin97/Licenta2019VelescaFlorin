@@ -1,6 +1,7 @@
 package com.florinvelesca.beaconapp.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
+import com.florinvelesca.beaconapp.MainActivity;
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.adapters.ClassRoomsRecyclerAdapter;
 import com.florinvelesca.beaconapp.interfaces.OnClassRoomSelected;
@@ -116,9 +118,19 @@ public class SearchClassRoomFragment extends Fragment implements OnClassRoomSele
 
     @Override
     public void onClassSelected(int position) {
-        Intent mapActivity = new Intent(getActivity(), DrawActivity.class);
-        mapActivity.putExtra("ClassName",classRooms.get(position));
-        startActivity(mapActivity);
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String currentBeacon = mainActivity.getCurrentBeacon();
+        if(currentBeacon != null){
+            Intent mapActivity = new Intent(getActivity(), DrawActivity.class);
+            mapActivity.putExtra("ClassName",classRooms.get(position));
+            mapActivity.putExtra("CurrentClassName",currentBeacon);
+
+            startActivity(mapActivity);
+
+        }
+        else {
+            Toast.makeText(getActivity(),"You need tot go near a room",Toast.LENGTH_SHORT).show();
+        }
 
     }
 }

@@ -56,6 +56,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle toggle;
     private TextView NearClassTextView;
 
+
+    private String currentBeacon;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,6 +204,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    public void setCurrentBeacon(String currentBeacon) {
+        this.currentBeacon = currentBeacon;
+    }
+    public String getCurrentBeacon() {
+        return currentBeacon;
+    }
 
     @Override
     public void OnBeaconReceive(List<Beacon> beaconList) {
@@ -213,5 +224,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void OnBeaconNameRetrieve(String name) {
         NearClassTextView.setText(name);
+        setCurrentBeacon(name);
+
     }
+
+
+
 }
