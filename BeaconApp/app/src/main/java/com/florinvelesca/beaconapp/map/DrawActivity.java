@@ -58,12 +58,15 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             destination = extras.getString("ClassName", "nill");
-            currentLocation = extras.getString("CurrentClassName","nill");
-            currentFloor = extras.getInt("CurrentFloor",-1);
+            currentLocation = extras.getString("CurrentClassName", "nill");
+            currentFloor = extras.getInt("CurrentFloor", -1);
         }
 
         mapView = findViewById(R.id.map_view);
         mapView.setCurrentFloor(currentFloor);
+        mapView.setBackgroundResource(getFloorImage(currentFloor));
+
+
         try {
             InputStream classroomJsonInputStream = getAssets().open("classroom_coordinates_floor2.json");
             List<ClassroomCoordinates> classrooms = new Gson().fromJson(new InputStreamReader(classroomJsonInputStream), new TypeToken<List<ClassroomCoordinates>>() {
@@ -82,6 +85,7 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
 
 
     }
+
     @Override
     public void OnBeaconReceive(List<Beacon> beaconList) {
         Log.d(getLocalClassName(), beaconList.toString());
@@ -89,10 +93,12 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
     }
 
     @Override
-    public void OnNearBeacon(Beacon beacon) { }
+    public void OnNearBeacon(Beacon beacon) {
+    }
 
     @Override
-    public void OnBeaconNameRetrieve(BeaconTable name) { }
+    public void OnBeaconNameRetrieve(BeaconTable name) {
+    }
 
 
     @Override
@@ -104,13 +110,29 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
 
     @Override
     public void onNearestBeaconReceive(BeaconTable beaconName) {
-        if(mapView.isVisited(beaconName)){
-            Toast.makeText(DrawActivity.this,"You Are going in the wrong direction",Toast.LENGTH_SHORT).show();
+        if (mapView.isVisited(beaconName)) {
+            Toast.makeText(DrawActivity.this, "You Are going in the wrong direction", Toast.LENGTH_SHORT).show();
 
+        }
+        if (beaconName.getFloor() != currentFloor) {
+            mapView.setBackgroundResource(getFloorImage(beaconName.getFloor()));
         }
         mapView.setCurrentFloor(beaconName.getFloor());
         mapView.addVisitedRoom(beaconName);
 
         mapView.invalidate();
+    }
+
+
+    private int getFloorImage(int floor) {
+        switch (floor) {
+            case 1:
+                return R.drawable.floor_1;
+            case 2:
+                return R.drawable.floor2;
+            default:
+                return 0;
+        }
+
     }
 }
