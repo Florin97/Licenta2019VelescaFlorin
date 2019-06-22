@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "roomId": 300,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 2,
+    "roomId": 301,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 3,
+    "roomId": 302,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 4,
+    "roomId": 303,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 5,
+    "roomId": 304,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 6,
+    "roomId": 305,
+    "floor": 1,
+    "type": "room"
+  },
+  {
+    "id": 7,
+    "roomId": 306,
+    "floor": 1,
+    "type": "room"
+  }
+]

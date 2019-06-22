@@ -1,0 +1,32 @@
+[
+  {
+    "beacon1Id": 1,
+    "beacon2Id": 2,
+    "distance": 10
+  },
+  {
+    "beacon1Id": 2,
+    "beacon2Id": 3,
+    "distance": 10
+  },
+  {
+    "beacon1Id": 3,
+    "beacon2Id": 4,
+    "distance": 10
+  },
+  {
+    "beacon1Id": 4,
+    "beacon2Id": 5,
+    "distance": 10
+  },
+  {
+    "beacon1Id": 5,
+    "beacon2Id": 6,
+    "distance": 10
+  },
+  {
+    "beacon1Id": 6,
+    "beacon2Id": 7,
+    "distance": 10
+  }
+]

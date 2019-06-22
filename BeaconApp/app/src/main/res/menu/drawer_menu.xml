@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/search_clasroom_item"
+            android:title="Search Classroom"
+            android:icon="@drawable/ic_assignment_black_24dp"/>
+        <item
+            android:id="@+id/beacon_item_drawable"
+            android:title="Current Classrom"
+            android:icon="@drawable/ic_beacon_24dp" />
+        <item android:id="@+id/test_item"
+            android:title="Test"
+            android:icon="@drawable/ic_group_collapse_00">
+
+        </item>
+    </group>
+</menu>
