@@ -73,7 +73,9 @@ public class MapView extends ImageView {
     }
 
     public void addVisitedRoom(BeaconTable visitedRoom) {
-        visitedRooms.add(visitedRoom);
+        if(!visitedRooms.contains(visitedRoom)){
+            visitedRooms.add(visitedRoom);
+        }
         invalidate();
     }
 
@@ -94,33 +96,11 @@ public class MapView extends ImageView {
         visitedPaint.setColor(Color.RED);
         visitedPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-//        List<Classroom> classrooms = new ArrayList<>(5);
-//        int y = 250;
-//        int stepSize = 340;
-//        for (int i = 0; i < 5; i++) {
-//            Classroom classroom = new Classroom();
-//            classroom.setName("c30" + i);
-//            classroom.setX(stepSize / 2 + stepSize * i);
-//            classroom.setY(y);
-//            classrooms.add(classroom);
-//        }
-//
-//        String json = new Gson().toJson(classrooms);
-//        Log.d("json", json);
-
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-//        int y = 250;
-//        int stepSize = 340;
-//        for (int i = 0; i < 5; i++) {
-//            canvas.drawCircle(stepSize / 2 + stepSize * i, y, 20, pathToFollowPaint);
-//        }
-
-        //filtreaze room de la etajul curent
 
         if (classroomCoordinates == null || classroomCoordinates.isEmpty()) {
             return;

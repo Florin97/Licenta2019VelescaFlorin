@@ -6,11 +6,9 @@ import android.os.AsyncTask;
 import com.florinvelesca.beaconapp.database.AppDatabase;
 import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.DatabaseHolder;
-import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnPathReceive;
-import com.florinvelesca.beaconapp.pathalgorithm.BeaconTest;
+import com.florinvelesca.beaconapp.pathalgorithm.BeaconPath;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GetPathTask extends AsyncTask<Void, Void, Void> {
@@ -33,7 +31,7 @@ public class GetPathTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         AppDatabase database = DatabaseHolder.getDatabase(context);
-        path = BeaconTest.start(database, currentClass, destinationClass);
+        path = BeaconPath.getPath(database, currentClass, destinationClass);
         return null;
     }
 

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BeaconTest {
+public class BeaconPath {
 
-    public static List<BeaconTable> start(final AppDatabase appDatabase, String currentLocation, String destination) {
+    public static List<BeaconTable> getPath(final AppDatabase appDatabase, String currentLocation, String destination) {
 
         BeaconLinkDao beaconLinkDao = appDatabase.beaconLinkDao();
         BeaconDao beaconDao = appDatabase.beaconDao();

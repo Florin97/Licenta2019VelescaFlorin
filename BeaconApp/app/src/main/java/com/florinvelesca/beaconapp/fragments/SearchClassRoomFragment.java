@@ -71,7 +71,7 @@ public class SearchClassRoomFragment extends Fragment implements OnClassRoomSele
         View view = inflater.inflate(R.layout.fragment_search_class_room, container, false);
 
 
-        for(int i = 100; i < 400; i++){
+        for(int i = 300; i < 400; i++){
             String className = "C" + Integer.toString((i));
             classRooms.add(className);
         }

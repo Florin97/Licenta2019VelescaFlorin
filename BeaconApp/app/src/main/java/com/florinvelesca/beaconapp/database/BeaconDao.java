@@ -35,4 +35,5 @@ public interface BeaconDao {
     BeaconTable getRoom(String uuid, String minor);
 
 
+
 }

@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
+public class SearchBeaconsTask extends AsyncTask<Void, Void, Void> {
     private Context context;
     private OnBeaconReceive onBeaconReceive;
     private OnBeaconClassRoomNameReceive onBeaconClassRoomNameReceive;
@@ -43,6 +43,7 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
     private OnBeaconReceive beaconReceive;
     private AppDatabase database;
     private OnNearestBeaconReceive nearestBeaconReceive;
+
     public SearchBeaconsTask(Context context) {
         this.context = context;
         beaconReceive = (OnBeaconReceive) context;
@@ -52,7 +53,6 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         database = DatabaseHolder.getDatabase(context);
-
 
 
         beaconManager = BeaconManager.getInstanceForApplication(context);
@@ -112,14 +112,17 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
                     public void run() {
                         if (!beacons.isEmpty() && context != null) {
 
-                            Beacon closestBeacon = getClosestBeacon(beacons);
-                            final BeaconTable closestBeaconName = getClassByUuidMinor(closestBeacon.getId1().toString(),closestBeacon.getId3().toString());
+                            final Beacon closestBeacon = getClosestBeacon(beacons);
+                            final BeaconTable closestBeaconName = getClassByUuidMinor(closestBeacon.getId1().toString(), closestBeacon.getId3().toString());
 
 
                             Objects.requireNonNull((DrawActivity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    nearestBeaconReceive.onNearestBeaconReceive(closestBeaconName);
+                                    if (closestBeacon.getDistance() < 0.3) {
+                                        nearestBeaconReceive.onNearestBeaconReceive(closestBeaconName);
+                                    }
+
                                     beaconReceive.OnBeaconReceive(beacons);
 
                                 }
@@ -136,23 +139,25 @@ public class SearchBeaconsTask extends AsyncTask<Void,Void,Void> {
             Log.e(getClass().getName(), "Error: ", e);
         }
     }
-    private Beacon getClosestBeacon(List<Beacon> beaconList){
+
+    private Beacon getClosestBeacon(List<Beacon> beaconList) {
         double min = 9999;
         Beacon minBeacon = null;
-        for(Beacon beacon : beaconList){
-            if(beacon.getDistance() < min){
+        for (Beacon beacon : beaconList) {
+            if (beacon.getDistance() < min) {
                 min = beacon.getDistance();
                 minBeacon = beacon;
             }
         }
+
         return minBeacon;
     }
 
 
-    private BeaconTable getClassByUuidMinor(String uuid, String minor){
+    private BeaconTable getClassByUuidMinor(String uuid, String minor) {
         BeaconTable result;
         BeaconDao beaconDao = database.beaconDao();
-        result = beaconDao.getRoom(uuid,minor);
+        result = beaconDao.getRoom(uuid, minor);
 
 
         return result;

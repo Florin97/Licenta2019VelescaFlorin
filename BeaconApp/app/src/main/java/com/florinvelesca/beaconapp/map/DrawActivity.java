@@ -2,22 +2,17 @@ package com.florinvelesca.beaconapp.map;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.florinvelesca.beaconapp.R;
-import com.florinvelesca.beaconapp.database.AppDatabase;
 import com.florinvelesca.beaconapp.database.BeaconTable;
 import com.florinvelesca.beaconapp.database.ClassroomCoordinates;
-import com.florinvelesca.beaconapp.database.DatabaseHolder;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconClassRoomNameReceive;
 import com.florinvelesca.beaconapp.interfaces.OnBeaconReceive;
 import com.florinvelesca.beaconapp.interfaces.OnNearestBeaconReceive;
 import com.florinvelesca.beaconapp.interfaces.OnPathReceive;
-import com.florinvelesca.beaconapp.pathalgorithm.BeaconTest;
-import com.florinvelesca.beaconapp.tasks.GetClassRoomByUuidTask;
 import com.florinvelesca.beaconapp.tasks.GetPathTask;
 import com.florinvelesca.beaconapp.tasks.SearchBeaconsTask;
 import com.google.gson.Gson;
@@ -28,7 +23,6 @@ import org.altbeacon.beacon.Beacon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +65,9 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
             InputStream classroomJsonInputStream = getAssets().open("classroom_coordinates_floor2.json");
             List<ClassroomCoordinates> classrooms = new Gson().fromJson(new InputStreamReader(classroomJsonInputStream), new TypeToken<List<ClassroomCoordinates>>() {
             }.getType());
+
             classroomMap = new HashMap<>(classrooms.size());
+
             for (ClassroomCoordinates classroom : classrooms) {
                 classroomMap.put(classroom.getName(), classroom);
             }
@@ -106,28 +102,31 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         pathToFollow = path;
         mapView.setClassroomCoordinates(classroomMap);
         mapView.setPathToFollow(pathToFollow);
+        mapView.invalidate();
     }
 
     @Override
     public void onNearestBeaconReceive(BeaconTable beaconName) {
+
         if (mapView.isVisited(beaconName)) {
             Toast.makeText(DrawActivity.this, "You Are going in the wrong direction", Toast.LENGTH_SHORT).show();
 
-        }
-        if (beaconName.getFloor() != currentFloor) {
-            mapView.setBackgroundResource(getFloorImage(beaconName.getFloor()));
-        }
-        mapView.setCurrentFloor(beaconName.getFloor());
-        mapView.addVisitedRoom(beaconName);
+        } else if (beaconName != null) {
+            if (beaconName.getFloor() != currentFloor) {
+                mapView.setBackgroundResource(getFloorImage(beaconName.getFloor()));
+            }
+            mapView.setCurrentFloor(beaconName.getFloor());
+            mapView.addVisitedRoom(beaconName);
 
-        mapView.invalidate();
+            mapView.invalidate();
+        }
     }
 
 
     private int getFloorImage(int floor) {
         switch (floor) {
             case 1:
-                return R.drawable.floor_1;
+                return R.drawable.floor1;
             case 2:
                 return R.drawable.floor2;
             default:
