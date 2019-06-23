@@ -121,6 +121,10 @@ public class MapView extends ImageView {
         }
 
         for (BeaconTable visitedRoom : visitedRooms) {
+            if (visitedRoom.getFloor() != currentFloor) {
+                continue;
+            }
+
             ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(visitedRoom.getClassRoomName());
 
             if (currentRoom != null && visitedRoom.getClassRoomName().equals(currentRoom.getClassRoomName())) {
