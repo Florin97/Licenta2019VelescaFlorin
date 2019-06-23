@@ -76,7 +76,7 @@ public class MapView extends ImageView {
 
     public void addVisitedRoom(BeaconTable visitedRoom) {
         currentRoom = visitedRoom;
-        if (!visitedRooms.contains(visitedRoom)) {
+        if (!visitedRooms.contains(visitedRoom) && pathToFollow.contains(visitedRoom)) {
             visitedRooms.add(visitedRoom);
         }
         invalidate();
@@ -127,12 +127,13 @@ public class MapView extends ImageView {
 
             ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(visitedRoom.getClassRoomName());
 
-            if (currentRoom != null && visitedRoom.getClassRoomName().equals(currentRoom.getClassRoomName())) {
-                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 1.3f, visitedPaint);
-                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 0.4f, currentRoomPaint);
-            } else {
-                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, visitedPaint);
-            }
+            canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, visitedPaint);
+        }
+
+        if (currentRoom != null) {
+            ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(currentRoom.getClassRoomName());
+            canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 1.3f, visitedPaint);
+            canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 0.4f, currentRoomPaint);
         }
     }
 
