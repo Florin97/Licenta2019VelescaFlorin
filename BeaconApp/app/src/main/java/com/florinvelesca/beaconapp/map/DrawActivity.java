@@ -102,14 +102,20 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
         pathToFollow = path;
         mapView.setClassroomCoordinates(classroomMap);
         mapView.setPathToFollow(pathToFollow);
+
+        if(!pathToFollow.isEmpty()){
+            mapView.addVisitedRoom(pathToFollow.get(0));
+        }
+
         mapView.invalidate();
     }
 
     @Override
     public void onNearestBeaconReceive(BeaconTable beaconName) {
+        Log.d("onNearestBeaconReceivez", beaconName.getClassRoomName());
 
         if (mapView.isVisited(beaconName)) {
-            Toast.makeText(DrawActivity.this, "You Are going in the wrong direction", Toast.LENGTH_SHORT).show();
+            mapView.addVisitedRoom(beaconName);
 
         } else if (beaconName != null) {
             if (beaconName.getFloor() != currentFloor) {
@@ -117,8 +123,6 @@ public class DrawActivity extends Activity implements OnBeaconReceive, OnBeaconC
             }
             mapView.setCurrentFloor(beaconName.getFloor());
             mapView.addVisitedRoom(beaconName);
-
-            mapView.invalidate();
         }
     }
 

@@ -61,7 +61,7 @@ public class SearchBeaconsTask extends AsyncTask<Void, Void, Void> {
         // Sets the delay between each scans according to the settings
         //instance.foregroundBetweenScanPeriod = prefs.getScanDelay()
 
-        beaconManager.setForegroundBetweenScanPeriod(10);
+        beaconManager.setForegroundBetweenScanPeriod(2000);
         // Add all the beacon types we want to discover
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(IBEACON_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(EDDYSTONE_UID_LAYOUT));
@@ -141,7 +141,7 @@ public class SearchBeaconsTask extends AsyncTask<Void, Void, Void> {
     }
 
     private Beacon getClosestBeacon(List<Beacon> beaconList) {
-        double min = 9999;
+        double min = Integer.MAX_VALUE;
         Beacon minBeacon = null;
         for (Beacon beacon : beaconList) {
             if (beacon.getDistance() < min) {

@@ -22,12 +22,19 @@ import com.florinvelesca.beaconapp.MainActivity;
 import com.florinvelesca.beaconapp.R;
 import com.florinvelesca.beaconapp.adapters.ClassRoomsRecyclerAdapter;
 import com.florinvelesca.beaconapp.database.BeaconTable;
+import com.florinvelesca.beaconapp.database.ClassroomCoordinates;
 import com.florinvelesca.beaconapp.interfaces.OnClassRoomSelected;
 import com.florinvelesca.beaconapp.map.DrawActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.altbeacon.beacon.BeaconParser;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -71,10 +78,7 @@ public class SearchClassRoomFragment extends Fragment implements OnClassRoomSele
         View view = inflater.inflate(R.layout.fragment_search_class_room, container, false);
 
 
-        for(int i = 300; i < 400; i++){
-            String className = "C" + Integer.toString((i));
-            classRooms.add(className);
-        }
+        classRooms = getClassNames();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_class_rooms);
         recyclerView.setHasFixedSize(true);
@@ -87,7 +91,23 @@ public class SearchClassRoomFragment extends Fragment implements OnClassRoomSele
 
         return view;
     }
+    private List<String>  getClassNames(){
 
+        InputStream classroomJsonInputStream = null;
+        try {
+            classroomJsonInputStream = getActivity().getAssets().open("classroom_coordinates_floor2.json");
+            List<ClassroomCoordinates> classrooms = new Gson().fromJson(new InputStreamReader(classroomJsonInputStream), new TypeToken<List<ClassroomCoordinates>>() {
+            }.getType());
+            List<String> classNames = new ArrayList<>();
+            for (ClassroomCoordinates classroom : classrooms) {
+                classNames.add(classroom.getName());
+            }
+            return classNames;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       return Collections.emptyList();
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 

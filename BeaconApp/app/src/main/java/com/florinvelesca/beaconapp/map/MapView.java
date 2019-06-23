@@ -28,10 +28,12 @@ import java.util.Map;
 
 @SuppressLint("AppCompatCustomView")
 public class MapView extends ImageView {
-    private static final int RADIUS = 15;
+    private static final int RADIUS = 18;
 
     private Paint pathToFollowPaint = new Paint();
     private Paint visitedPaint = new Paint();
+    private Paint currentRoomPaint = new Paint();
+
     private Map<String, ClassroomCoordinates> classroomCoordinates;
 
     public void setCurrentFloor(int currentFloor) {
@@ -45,7 +47,7 @@ public class MapView extends ImageView {
 
     private List<BeaconTable> pathToFollow = Collections.emptyList();
 
-
+    private BeaconTable currentRoom = null;
 
     public MapView(Context context) {
         super(context);
@@ -73,15 +75,17 @@ public class MapView extends ImageView {
     }
 
     public void addVisitedRoom(BeaconTable visitedRoom) {
-        if(!visitedRooms.contains(visitedRoom)){
+        currentRoom = visitedRoom;
+        if (!visitedRooms.contains(visitedRoom)) {
             visitedRooms.add(visitedRoom);
         }
         invalidate();
     }
 
-    public Boolean isVisited(BeaconTable beaconName){
-        if(visitedRooms.contains(beaconName) && !visitedRooms.get(visitedRooms.size() -1).equals(beaconName)){
-            Log.d("MAP VIEW","Wrong direction");
+    public Boolean isVisited(BeaconTable beaconName) {
+
+        if (visitedRooms.contains(beaconName) && !visitedRooms.get(visitedRooms.size() - 1).equals(beaconName)) {
+            Log.d("MAP VIEW", "Wrong direction");
             return true;
         }
         return false;
@@ -90,11 +94,14 @@ public class MapView extends ImageView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        pathToFollowPaint.setColor(Color.BLUE);
+        pathToFollowPaint.setColor(0xff00BCD4);
         pathToFollowPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        visitedPaint.setColor(Color.RED);
+        visitedPaint.setColor(0xff8BC34A);
         visitedPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        currentRoomPaint.setColor(Color.BLACK);
+        currentRoomPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
     }
 
@@ -106,7 +113,7 @@ public class MapView extends ImageView {
             return;
         }
         for (BeaconTable room : pathToFollow) {
-            if(room.getFloor() != currentFloor){
+            if (room.getFloor() != currentFloor) {
                 continue;
             }
             ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(room.getClassRoomName());
@@ -115,7 +122,13 @@ public class MapView extends ImageView {
 
         for (BeaconTable visitedRoom : visitedRooms) {
             ClassroomCoordinates classroomCoordinates = this.classroomCoordinates.get(visitedRoom.getClassRoomName());
-            canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, visitedPaint);
+
+            if (currentRoom != null && visitedRoom.getClassRoomName().equals(currentRoom.getClassRoomName())) {
+                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 1.3f, visitedPaint);
+                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS * 0.4f, currentRoomPaint);
+            } else {
+                canvas.drawCircle(classroomCoordinates.getX(), classroomCoordinates.getY(), RADIUS, visitedPaint);
+            }
         }
     }
 
