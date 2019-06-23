@@ -32,6 +32,7 @@ import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,7 +76,7 @@ public class SearchBeaconFragment extends Fragment{
         // Sets the delay between each scans according to the settings
         //instance.foregroundBetweenScanPeriod = prefs.getScanDelay()
 
-        beaconManager.setForegroundBetweenScanPeriod(10);
+        beaconManager.setForegroundBetweenScanPeriod(2000);
         // Add all the beacon types we want to discover
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(IBEACON_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(EDDYSTONE_UID_LAYOUT));
@@ -113,6 +114,7 @@ public class SearchBeaconFragment extends Fragment{
         beaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
+                Log.d("beaconzz", collection.toString());
                 final List<Beacon> beacons = new ArrayList<>(collection);
                 if(!beacons.isEmpty() && getActivity() != null){
                     Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {

@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void OnBeaconReceive(List<Beacon> beaconList) {
-     //   insertBeacons(beaconList);
+//        insertBeacons(beaconList);
 
     }
     @Override

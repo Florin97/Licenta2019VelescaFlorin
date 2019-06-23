@@ -13,6 +13,7 @@ public class BeaconGraph {
     private static final int NO_LINK = -1;
 
     private Map<Integer, List<Link>> links = new HashMap<>();
+    private List<List<Integer>> paths = new ArrayList<>();
 
     public void addLink(int beaconId1, int beaconId2, int distance) {
         List<Link> beacon1Links = getBeaconLinks(beaconId1);
@@ -43,34 +44,57 @@ public class BeaconGraph {
         return false;
     }
 
+    private List<Integer> getAllNotVisitedBeacons(int beacon1, Set<Integer> visitedBeacons) {
+        List<Integer> notVisitedBeacons = new ArrayList<>();
 
-    private int selectFirstNotSelectedBeacon(int beacon1, Set<Integer> visitedBeacons) {
         List<Link> beacon1Links = links.get(beacon1);
         for (Link link : beacon1Links) {
             if (!visitedBeacons.contains(link.getBeacon())) {
-                return link.getBeacon();
+                notVisitedBeacons.add(link.getBeacon());
             }
         }
 
-        return NO_LINK;
+        return notVisitedBeacons;
     }
 
     public List<Integer> getPath(int beacon1, int beacon2) {
-        int currentBeacon = beacon1;
-        List<Integer> path = new ArrayList<>();
-        Set<Integer> visitedBeacons = new HashSet<>();
+        paths.clear();
 
-        while (currentBeacon != NO_LINK) {
-            visitedBeacons.add(currentBeacon);
-            path.add(currentBeacon);
-            if (hasDirectLink(currentBeacon, beacon2)) {
-                path.add(beacon2);
-                return path;
+        buildPath(new ArrayList<Integer>(), new HashSet<Integer>(), beacon1, beacon2);
+
+        List<Integer> shortestPath = Collections.emptyList();
+        int shortestPathLength = Integer.MAX_VALUE;
+
+        for (List<Integer> path : paths) {
+            if (path.size() < shortestPathLength) {
+                shortestPathLength = path.size();
+                shortestPath = path;
             }
+        }
+        return shortestPath;
+    }
 
-            currentBeacon = selectFirstNotSelectedBeacon(currentBeacon, visitedBeacons);
+    private void buildPath(List<Integer> path, Set<Integer> visitedBeacons, int nextBeacon, int finalBeacon) {
+
+        visitedBeacons.add(nextBeacon);
+        path.add(nextBeacon);
+
+        if (hasDirectLink(nextBeacon, finalBeacon)) {
+            path.add(finalBeacon);
+            paths.add(new ArrayList<>(path));
+            path.remove(path.size() - 1);
+
+        } else {
+
+            List<Integer> notVisitedBeacons = getAllNotVisitedBeacons(nextBeacon, visitedBeacons);
+
+            for (Integer notVisitedBeacon : notVisitedBeacons) {
+                buildPath(path, visitedBeacons, notVisitedBeacon, finalBeacon);
+            }
         }
 
-        return Collections.emptyList();
+        visitedBeacons.remove(nextBeacon);
+        path.remove(path.size() - 1);
+
     }
 }
